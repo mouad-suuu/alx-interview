@@ -1,33 +1,38 @@
-#!/usr/bin/env python3
-"""Least Frequently Used caching module.
+#!/usr/bin/python3
+"""UTF-8 validation module.
 """
 
 
 def validUTF8(data):
-    """
-    Validate if a list of integers represents a valid UTF-8 encoding.
+    """Checks if a list of integers are valid UTF-8 codepoints.
+    See <https://datatracker.ietf.org/doc/html/rfc3629#page-4>
     Args:
-    data (list): A list of integers where each
-    integer represents one byte of data.
+        data (list): A list of integers representing bytes.
     Returns:
-    bool: True if the list represents valid UTF-8 encoding, False otherwise.
+        bool: True if the data represents a valid UTF-8 encoding, else False.
     """
-    n_bytes = 0
-    mask1 = 1 << 7
-    mask2 = 1 << 6
-
-    for num in data:
-        mask = 1 << 7
-        if n_bytes == 0:
-            while mask & num:
-                n_bytes += 1
-                mask = mask >> 1
-            if n_bytes == 0:
-                continue
-            if n_bytes == 1 or n_bytes > 4:
-                return False
+    skip = 0
+    n = len(data)
+    for i in range(n):
+        if skip > 0:
+            skip -= 1
+            continue
+        if data[i] < 0 or data[i] > 255:
+            return False
+        if data[i] & 0b11110000 == 0b11110000:
+            span = 4
+        elif data[i] & 0b11100000 == 0b11100000:
+            span = 3
+        elif data[i] & 0b11000000 == 0b11000000:
+            span = 2
+        elif data[i] & 0b10000000 == 0b00000000:
+            continue
         else:
-            if not (num & mask1 and not (num & mask2)):
+            return False
+        if i + span > n:
+            return False
+        for j in range(1, span):
+            if data[i + j] & 0b11000000 != 0b10000000:
                 return False
-        n_bytes -= 1
-    return n_bytes == 0
+        skip = span - 1
+    return True
