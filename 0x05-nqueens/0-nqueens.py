@@ -1,9 +1,28 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+"""
+A Python script to solve the N Queens problem using backtracking. This script
+prints all possible arrangements of N queens on an NxN chessboard, where no two
+queens threaten each other. It follows the command-line interface specified for
+handling input arguments and errors.
+
+Usage:
+    ./0-nqueens.py N
+where N is the number of queens and the size of the chessboard.
+"""
+
 import sys
 
 
 def is_safe(board, row, col):
-    # Check if there is a queen in the same column
+    """
+    Check if it's safe to place a queen at (row, col).
+    Parameters:
+        board (list): Current state of the board (columns with queens placed).
+        row (int): Target row for placing the queen.
+        col (int): Target column for placing the queen.
+    Returns:
+        bool: True if safe, False otherwise.
+    """
     for i in range(row):
         if board[i] == col or \
            board[i] - i == col - row or \
@@ -13,6 +32,14 @@ def is_safe(board, row, col):
 
 
 def solve_nqueens_util(board, row, n):
+    """
+    Recursive utility function to solve
+    the N Queens problem using backtracking.
+    Parameters:
+        board (list): Current partial configuration of the board.
+        row (int): Current row to try to place a queen.
+        n (int): Total number of queens and size of the board.
+    """
     if row == n:
         print([[i, board[i]] for i in range(n)])
         return
@@ -24,7 +51,12 @@ def solve_nqueens_util(board, row, n):
 
 
 def solve_nqueens(n):
-    board = [-1] * n
+    """
+    Set up the board and start the backtracking algorithm.
+    Parameters:
+        n (int): Number of queens and the size of the chessboard.
+    """
+    board = [-1] * n  # Initialize the board with -1 indicating empty columns
     solve_nqueens_util(board, 0, n)
 
 
