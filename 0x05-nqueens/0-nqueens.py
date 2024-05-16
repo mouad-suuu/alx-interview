@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Usage:
     ./0-nqueens.py N
 where N is the number of queens and the size of the chessboard.
 """
-
 import sys
 
 
@@ -28,8 +27,8 @@ def is_safe(board, row, col):
 
 def solve_nqueens_util(board, row, n):
     """
-    Recursive utility function to solve
-    the N Queens problem using backtracking.
+    Recursive utility function to solve the
+    N Queens problem using backtracking.
     Parameters:
         board (list): Current partial configuration of the board.
         row (int): Current row to try to place a queen.
@@ -51,7 +50,7 @@ def solve_nqueens(n):
     Parameters:
         n (int): Number of queens and the size of the chessboard.
     """
-    board = [-1] * n  # Initialize the board with -1 indicating empty columns
+    board = [-1] * n
     solve_nqueens_util(board, 0, n)
 
 
