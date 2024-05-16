@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 """
-A Python script to solve the N Queens problem using backtracking. This script
-prints all possible arrangements of N queens on an NxN chessboard, where no two
-queens threaten each other. It follows the command-line interface specified for
-handling input arguments and errors.
-
 Usage:
     ./0-nqueens.py N
 where N is the number of queens and the size of the chessboard.
