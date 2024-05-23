@@ -1,46 +1,27 @@
-#!/usr/bin/env node
-
+#!/usr/bin/node
 const request = require("request");
+const API_URL = "https://swapi-api.hbtn.io/api";
 
-// Get the Movie ID from the command line arguments
-const movieId = process.argv[2];
+if (process.argv.length > 2) {
+  request(`${API_URL}/films/${process.argv[2]}/`, (err, _, body) => {
+    if (err) {
+      console.log(err);
+    }
+    const charactersURL = JSON.parse(body).characters;
+    const charactersName = charactersURL.map(
+      (url) =>
+        new Promise((resolve, reject) => {
+          request(url, (promiseErr, __, charactersReqBody) => {
+            if (promiseErr) {
+              reject(promiseErr);
+            }
+            resolve(JSON.parse(charactersReqBody).name);
+          });
+        })
+    );
 
-// URL for the Star Wars API
-const apiUrl = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
-
-request(apiUrl, function (error, response, body) {
-  if (error) {
-    console.error("Error:", error);
-    return;
-  }
-  if (response.statusCode !== 200) {
-    console.error("Failed to retrieve data:", response.statusCode);
-    return;
-  }
-
-  // Parse the JSON response
-  const filmData = JSON.parse(body);
-
-  // Get the list of characters
-  const characters = filmData.characters;
-
-  // Fetch each character's details and print their names
-  characters.forEach((characterUrl) => {
-    request(characterUrl, function (error, response, body) {
-      if (error) {
-        console.error("Error:", error);
-        return;
-      }
-      if (response.statusCode !== 200) {
-        console.error("Failed to retrieve data:", response.statusCode);
-        return;
-      }
-
-      // Parse the JSON response
-      const characterData = JSON.parse(body);
-
-      // Print the character's name
-      console.log(characterData.name);
-    });
+    Promise.all(charactersName)
+      .then((names) => console.log(names.join("\n")))
+      .catch((allErr) => console.log(allErr));
   });
-});
+}
