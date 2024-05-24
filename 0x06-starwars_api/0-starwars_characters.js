@@ -2,19 +2,27 @@
 
 const request = require('request');
 
-request(
-  'https://swapi-api.hbtn.io/api/films/' + process.argv[2],
-  function (err, res, body) {
-    if (err) throw err;
-    const actors = JSON.parse(body).characters;
-    exactOrder(actors, 0);
-  }
-);
-const exactOrder = (actors, x) => {
-  if (x === actors.length) return;
-  request(actors[x], function (err, res, body) {
-    if (err) throw err;
+// Function to get character names
+const getCharacterNames = (url, index, characters) => {
+  if (index === characters.length) return;
+  request(characters[index], (err, res, body) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
     console.log(JSON.parse(body).name);
-    exactOrder(actors, x + 1);
+    getCharacterNames(url, index + 1, characters);
   });
 };
+
+const movieId = process.argv[2];
+const apiUrl = `https://swapi-api.hbtn.io/api/films/${movieId}`;
+
+request(apiUrl, (err, res, body) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  const characters = JSON.parse(body).characters;
+  getCharacterNames(apiUrl, 0, characters);
+});
